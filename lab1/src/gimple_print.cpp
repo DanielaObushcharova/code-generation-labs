@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "gcc-plugin.h"
 #include "tree.h"
@@ -27,16 +28,34 @@ struct gimple_print_pass : gimple_opt_pass {
     virtual unsigned int execute(function *func) override;
 };
 
+void print_graphviz(const std::vector<bb_info_collector> &bbs) {
+    std::cout << "digraph G {" << std::endl; 
+    std::cout << "node [shape=\"box\"]" << std::endl; 
+    for (bb_info_collector bb : bbs) {
+        bb.print_graphviz();
+    }
+    std::cout << "}" << std::endl; 
+}
+
 unsigned int gimple_print_pass::execute(function *func) {
     basic_block bb;
+    std::vector<bb_info_collector> bbs;
     FOR_ALL_BB_FN(bb, func) {
         gimple_stmt_iterator it;
-        bb_info_collector info;
+        bb_info_collector info(bb->index);
         for (it = gsi_start_bb(bb); !gsi_end_p(it); gsi_next(&it)) {
             gimple *stmt = gsi_stmt(it);
             info.add_statement(stmt);
         }
+
+        edge e;
+        edge_iterator ei;
+        FOR_EACH_EDGE(e, ei, bb->succs) {
+            info.add_adjacent(e->dest->index);
+        }
+        bbs.push_back(info);
     }
+    print_graphviz(bbs);
     return 0;
 }
 

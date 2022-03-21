@@ -16,6 +16,6 @@ test:
 	gcc -fplugin=$(OUT)/gimple_print.so -o $(OUT)/test $(SRC)/test.c
 
 clean:
-	rm -f out
+	rm -f $(OUT)
 
 .PHONY: all build test clean

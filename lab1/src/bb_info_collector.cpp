@@ -1,9 +1,27 @@
 #include <iostream>
+#include <regex>
 
 #include "gcc-plugin.h"
 #include "tree.h"
 #include "gimple.h"
 #include "bb_info_collector.h"
+
+void bb_info_collector::print_graphviz() {
+    std::string copy = this->s;
+    copy = std::regex_replace(copy, std::regex("\n"), "\\n");
+    std::cout << this->id << "[label=\"" << copy << "\"]" << std::endl;
+    for (int id : this->adjacent) {
+        std::cout << this->id << "->" << id << std::endl;
+    }
+}
+
+bb_info_collector::bb_info_collector(int id) {
+    this->id = id;
+}
+
+void bb_info_collector::add_adjacent(int id) {
+    this->adjacent.push_back(id);
+}
 
 void bb_info_collector::add_string(std::string info) {
     this->s.append(info);
