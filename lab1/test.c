@@ -1,13 +1,15 @@
 #include <stdio.h>
 
 int main() {
-    int a;
-    int c;
-    scanf("%d", &c);
-    if (c == 1) {
-        a = 2;
-    } else {
-        a = 3;
+    int n;
+    scanf("%d", &n);
+    for (int i = 0; i < n; ++i) {
+        if (i % 15 == 0) {
+            printf("number = %d, FizzBuzz", i);
+        } else if (i % 3 == 0) {
+            printf("number = %d, Fizz", i);
+        } else if (i % 5 == 0) {
+            printf("number = %d, Buzz", i);
+        }
     }
-    printf("%d", a);
 }
