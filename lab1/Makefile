@@ -1,13 +1,21 @@
+COMPILE := g++ -c -I$$(gcc -print-file-name=plugin)/include -fPIC -fno-rtti  
+SRC := ./src
+OUT := ./out
+
 all: build test
 
 build:
-	g++ -c -I$$(gcc -print-file-name=plugin)/include -o gimple_print.o -fPIC -fno-rtti gimple_print.cpp
-	g++ -shared -o gimple_print.so gimple_print.o
+	mkdir -p $(OUT)
+	$(COMPILE) -o $(OUT)/gimple_print.o $(SRC)/gimple_print.cpp
+	$(COMPILE) -o $(OUT)/bb_info_collector.o $(SRC)/bb_info_collector.cpp
+	g++ -shared -o $(OUT)/gimple_print.so $(OUT)/gimple_print.o $(OUT)/bb_info_collector.o
+	rm $(OUT)/gimple_print.o $(OUT)/bb_info_collector.o
 
 test:
-	gcc -fplugin=./gimple_print.so -o test test.c
+	mkdir -p $(OUT)
+	gcc -fplugin=$(OUT)/gimple_print.so -o $(OUT)/test $(SRC)/test.c
 
 clean:
-	rm -f gimple_print.o gimple_print.so test
+	rm -f out
 
 .PHONY: all build test clean
