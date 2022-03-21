@@ -125,6 +125,11 @@ void bb_info_collector::add_tree(tree t) {
             }
             break;
         }
+        case ARRAY_REF:
+            this->add_string("ARRAY[");
+            this->add_tree(TREE_TYPE(t));
+            this->add_string("]");
+            break;
         default:
             this->add_string("(");
             this->add_string(std::to_string(code));
