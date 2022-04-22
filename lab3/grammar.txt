@@ -1,0 +1,8 @@
+<S> ::= <EXPR> <S> | .
+<EXPR> ::= <RETURN> | <ASSIGN> | <IF> | <WHILE>
+<RETURN> ::= return <RVAL> ;
+<ASSIGN> ::= <IDENT> = <RVAL> ; 
+<IF> ::= if <RVAL> { <S> } else { <S> }
+<WHILE> ::= while <RVAL> { <S> }
+<RVAL> ::= <SVAL>|<SVAL><OP><SVAL>
+<SVAL> ::= <IDENT>|<NUMBER>
