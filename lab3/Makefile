@@ -1,11 +1,14 @@
-run: build
-	./lexer < input.txt
+compiler: parser.o lexer.o
+	g++ -g -o compiler parser.o lexer.o
 
-build:
+parser.o: parser.cpp lexer.o
+	g++ -g -c parser.cpp
+
+lexer.o: lexer.lex
 	flex -o lexer.yy.cpp lexer.lex 
-	g++ -lfl lexer.yy.cpp -o lexer
+	g++ -g -c -lfl lexer.yy.cpp -o lexer.o
 
 clean:
-	rm -f lexer.yy.cpp lexer
+	rm -f lexer.yy.cpp lexer.o parser.o compiler
 
-.PHONY: build clean
+.PHONY: clean
