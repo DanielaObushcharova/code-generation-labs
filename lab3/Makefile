@@ -1,7 +1,7 @@
-compiler: parser.o lexer.o
-	g++ -g -o compiler parser.o lexer.o
+compiler: compiler.cpp parser.o lexer.o
+	g++ -g -o compiler compiler.cpp parser.o lexer.o
 
-parser.o: parser.cpp lexer.o
+parser.o: parser.cpp
 	g++ -g -c parser.cpp
 
 lexer.o: lexer.lex
