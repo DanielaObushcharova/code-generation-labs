@@ -14,11 +14,10 @@ std::ostream &operator<<(std::ostream &out, const Fragment &fragment) {
     return out;
 }
 
-std::ostream& operator<<(std::ostream &out, const Token &token) {
-    out << token.fragment << " ";
-    switch (token.type) {
+std::ostream& operator<<(std::ostream &out, const TokenType &type) {
+    switch (type) {
         case NUMBER:
-            out << "NUMBER(" << token.numberAttr << ")";
+            out << "NUMBER";
             break;
         case IF:
             out << "IF";
@@ -39,10 +38,10 @@ std::ostream& operator<<(std::ostream &out, const Token &token) {
             out << "WHILE";
             break;
         case IDENT:
-            out << "IDENT(" << token.identAttr << ")";
+            out << "IDENT";
             break;
         case OP:
-            out << "OP(" << token.opAttr << ")";
+            out << "OP";
             break;
         case ASSIGN:
             out << "ASSIGN";
@@ -52,6 +51,22 @@ std::ostream& operator<<(std::ostream &out, const Token &token) {
             break;
         case EOF_TOKEN:
             out << "EOF";
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<<(std::ostream &out, const Token &token) {
+    out << token.fragment << " " << token.type;
+    switch (token.type) {
+        case NUMBER:
+            out << "(" << token.numberAttr << ")";
+            break;
+        case IDENT:
+            out << "(" << token.identAttr << ")";
+            break;
+        case OP:
+            out << "(" << token.opAttr << ")";
             break;
     }
     return out;

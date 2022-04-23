@@ -41,9 +41,11 @@ struct Token {
 
     Token(TokenType _type, Fragment _fragment):
         type(_type), fragment(_fragment) {}
+
+    std::string toString();
 };
 
-
+std::ostream& operator<<(std::ostream &out, const TokenType &type);
 std::ostream& operator<<(std::ostream &out, const Token &token);
 std::ostream& operator<<(std::ostream &out, const Fragment &fragment);
 std::ostream& operator<<(std::ostream &out, const Position &position);
