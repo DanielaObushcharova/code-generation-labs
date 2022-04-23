@@ -2,8 +2,6 @@
 #include <iostream>
 #include <vector>
 
-extern "C" int yylex();
-
     struct Position {
         int line, column, index;
 
@@ -43,6 +41,49 @@ extern "C" int yylex();
             type(_type), fragment(_fragment) {}
     };
 
+    std::ostream& operator<<(std::ostream &out, const Token &token) {
+        switch (token.type) {
+            case NUMBER:
+                out << "NUMBER(" << token.numberAttr << ")";
+                break;
+            case IF:
+                out << "IF";
+                break;
+            case ELSE:
+                out << "ELSE";
+                break;
+            case OPEN_BRACE:
+                out << "OPEN_BRACE";
+                break;
+            case CLOSE_BRACE:
+                out << "CLOSE_BRACE";
+                break;
+            case WHILE:
+                out << "WHILE";
+                break;
+            case IDENT:
+                out << "IDENT(" << token.identAttr << ")";
+                break;
+            case OP:
+                out << "OP(" << token.opAttr << ")";
+                break;
+            case ASSIGN:
+                out << "ASSIGN";
+                break;
+            case RETURN:
+                out << "RETURN";
+                break;
+            case EOF_TOKEN:
+                out << "EOF";
+                break;
+        }
+        return out;
+    }
+
+#define YY_DECL Token yylex()
+
+extern "C" Token yylex();
+
     Position pos(1, 1, 0);
     Fragment cur(pos, pos);
     bool eof = false;
@@ -55,8 +96,6 @@ extern "C" int yylex();
         cur.end = pos;
     }
 
-std::vector<Token> tokens;
-
 #define YY_USER_ACTION { run_user_action(); }
 %}
 IDENT [a-zA-Z][a-zA-Z0-9]*
@@ -64,52 +103,44 @@ NUMBER -?(0|[1-9][0-9]*)
 OP [*+-]
 %%
 "return" {
-    Token token(RETURN, cur);
-    tokens.push_back(token);
+    return Token(RETURN, cur);
 }
 "if" {
-    Token token(IF, cur);
-    tokens.push_back(token);
+    return Token(IF, cur);
 }
 "while" {
-    Token token(WHILE, cur);
-    tokens.push_back(token);
+    return Token(WHILE, cur);
 }
 "else" {
-    Token token(ELSE, cur);
-    tokens.push_back(token);
+    return Token(ELSE, cur);
 }
 {IDENT} {
     Token token(IDENT, cur);
     token.identAttr = yytext;
-    tokens.push_back(token);
+    return token;
 }
 {NUMBER} {
     Token token(NUMBER, cur);
     token.numberAttr = std::stoi(yytext);
-    tokens.push_back(token);
+    return token;
 }
 {OP} {
-    Token token(NUMBER, cur);
+    Token token(OP, cur);
     token.opAttr = yytext[0];
-    tokens.push_back(token);
+    return token;
 }
 "{" {
-    Token token(OPEN_BRACE, cur);
-    tokens.push_back(token);
+    return Token(OPEN_BRACE, cur);
 }
 "}" {
-    Token token(CLOSE_BRACE, cur);
-    tokens.push_back(token);
+    return Token(CLOSE_BRACE, cur);
 }
 "=" {
-    Token token(ASSIGN, cur);
-    tokens.push_back(token);
+    return Token(ASSIGN, cur);
 }
 <<EOF>> {
     eof = true;
-    Token token(EOF_TOKEN, cur);
-    tokens.push_back(token);
+    return Token(EOF_TOKEN, cur);
 }
 " "
 \n {
@@ -120,6 +151,7 @@ OP [*+-]
 %%
 int main() {
     while (!eof) {
-        yylex();
+        Token token = yylex();
+        std::cout << token << std::endl;
     }
 }

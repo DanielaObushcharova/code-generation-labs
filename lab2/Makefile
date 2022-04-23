@@ -10,4 +10,4 @@ build:
 clean:
 	rm -f run bytecode.bc bytecode.s main text.ll
 
-.PHONY: .build
+.PHONY: run build clean
