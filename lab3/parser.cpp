@@ -136,13 +136,16 @@ void insertBBVertices(Node *tree) {
         std::vector<Node*> children;
         Node* curBB = new Node(BB, nullptr, {});
         for (Node *child : tree->children) {
-            if (child->rule == ASSIGN_RULE) {
+            if (child->rule == ASSIGN_RULE || child->rule == RETURN_RULE) {
                 curBB->children.push_back(child);
-            } else {
+            } 
+            if (child->rule != ASSIGN_RULE) {
                 if (curBB->children.size() > 0) {
                     children.push_back(curBB);
                 }
-                children.push_back(child);
+                if (child->rule != RETURN_RULE) {
+                    children.push_back(child);
+                }
                 curBB = new Node(BB, nullptr, {});
             }
         }
