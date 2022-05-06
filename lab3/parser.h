@@ -4,6 +4,7 @@
 #include "lexer.h"
 #include <vector>
 #include <string>
+#include <memory>
 
 enum Rule {
     S,
@@ -34,10 +35,10 @@ class SyntaxError : std::exception {
 struct Node {
     Rule rule;
     int id;
-    Token *token;
-    std::vector<Node*> children;
+    std::shared_ptr<Token> token;
+    std::vector<std::shared_ptr<Node>> children;
 
-    Node(Rule _rule, Token *_token, const std::vector<Node*> &_children);
+    Node(Rule _rule, std::shared_ptr<Token> _token, const std::vector<std::shared_ptr<Node>> &_children);
 
     void print(bool header = true);
 };
@@ -48,20 +49,20 @@ class Parser {
         std::vector<Token> tokens;
         Token peek(); 
         void next();
-        Node *parseS();
-        Node *parseExpr();
-        Node *parseReturn();
-        Node *parseAssign();
-        Node *parseIf();
-        Node *parseWhile();
-        Node *parseRval();
-        Node *parseOpval();
-        Node *parseSval();
-        Node *parseToken(TokenType type);
+        std::shared_ptr<Node> parseS();
+        std::shared_ptr<Node> parseExpr();
+        std::shared_ptr<Node> parseReturn();
+        std::shared_ptr<Node> parseAssign();
+        std::shared_ptr<Node> parseIf();
+        std::shared_ptr<Node> parseWhile();
+        std::shared_ptr<Node> parseRval();
+        std::shared_ptr<Node> parseOpval();
+        std::shared_ptr<Node> parseSval();
+        std::shared_ptr<Node> parseToken(TokenType type);
 
     public:
         Parser(const std::vector<Token> &_tokens);
-        Node *parse();
+        std::shared_ptr<Node> parse();
 };
 
 #endif

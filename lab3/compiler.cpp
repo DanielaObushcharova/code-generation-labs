@@ -3,7 +3,7 @@
 #include <map>
 #include <set>
 
-std::set<std::string> get_vars(Node *tree) {
+std::set<std::string> get_vars(std::shared_ptr<Node> tree) {
   if (tree->rule == TERM && tree->token->type == IDENT) {
     return {tree->token->identAttr};
   }
@@ -21,14 +21,14 @@ private:
   llvm::IRBuilder<> &builder;
   llvm::Function *func;
   std::map<std::string, llvm::AllocaInst *> &vars;
-  llvm::Value *generateRval(Node *tree);
+  llvm::Value *generateRval(std::shared_ptr<Node> tree);
 
 public:
   IRGenerator(llvm::LLVMContext &_ctx, llvm::IRBuilder<> &builder,
               llvm::Function *_func,
               std::map<std::string, llvm::AllocaInst *> &vars);
 
-  llvm::BasicBlock *generate(Node *tree, llvm::BasicBlock *parent);
+  llvm::BasicBlock *generate(std::shared_ptr<Node> tree, llvm::BasicBlock *parent);
 };
 
 IRGenerator::IRGenerator(llvm::LLVMContext &_ctx, llvm::IRBuilder<> &_builder,
@@ -36,7 +36,7 @@ IRGenerator::IRGenerator(llvm::LLVMContext &_ctx, llvm::IRBuilder<> &_builder,
                          std::map<std::string, llvm::AllocaInst *> &_vars)
     : ctx(_ctx), builder(_builder), func(_func), vars(_vars) {}
 
-llvm::Value *IRGenerator::generateRval(Node *tree) {
+llvm::Value *IRGenerator::generateRval(std::shared_ptr<Node> tree) {
   switch (tree->rule) {
   case TERM: {
     switch (tree->token->type) {
@@ -66,7 +66,7 @@ llvm::Value *IRGenerator::generateRval(Node *tree) {
   return nullptr;
 }
 
-llvm::BasicBlock *IRGenerator::generate(Node *tree, llvm::BasicBlock *parent) {
+llvm::BasicBlock *IRGenerator::generate(std::shared_ptr<Node> tree, llvm::BasicBlock *parent) {
   switch (tree->rule) {
   case S: {
     llvm::BasicBlock *prev = parent;
@@ -164,7 +164,7 @@ int main() {
     }
   }
   Parser parser(tokens);
-  Node *tree;
+  std::shared_ptr<Node> tree;
   try {
     tree = parser.parse();
 #ifdef DEBUG
@@ -196,7 +196,7 @@ int main() {
     varsMap[var] =
         builder.CreateAlloca(llvm::Type::getInt32Ty(ctx), nullptr, var);
   }
-  auto generator = new IRGenerator(ctx, builder, mainFunc, varsMap);
+  std::shared_ptr<IRGenerator> generator = std::make_shared<IRGenerator>(ctx, builder, mainFunc, varsMap);
   auto program = generator->generate(tree, entry);
   builder.SetInsertPoint(program);
   if (program) {
