@@ -78,7 +78,7 @@ void Node::print(bool header) {
 }
 
 void flattenS(std::shared_ptr<Node> tree) {
-  if (tree->rule == S && tree->children.size() == 2) {
+  if (tree->rule == S && tree->children.size() == 2 && tree->children[0]->rule == EXPR) {
     std::shared_ptr<Node> sc = tree->children[1];
     flattenS(tree->children[1]);
     std::vector<std::shared_ptr<Node>> children = {
