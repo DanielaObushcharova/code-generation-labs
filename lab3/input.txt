@@ -5,11 +5,11 @@ while 1 {
     c = cur;
     while c {
         if n {
-           n = n - 1;
-           res = res + cur;
-           c = c - 1;
+            n = n - 1;
+            res = res + cur;
+            c = c - 1;
         } else {
-           return res;
+            return res;
         }
     } 
     cur = cur + 1;
