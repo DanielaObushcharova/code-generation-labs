@@ -219,6 +219,9 @@ func traverseVersions(root *basicBlock, name string, counter *int, stack *[]int,
 		}
 	}
 
+	if _, ok := root.phis[name]; ok {
+		*stack = (*stack)[:len(*stack)-1]
+	}
 	for _, s := range root.instructions {
 		if s.lhs.name == name {
 			*stack = (*stack)[:len(*stack)-1]
