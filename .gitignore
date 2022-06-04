@@ -1,2 +1,11 @@
 .idea
 .vscode
+bytecode.bc
+bytecode.s
+main
+run
+text.ll
+compiler
+lexer.o
+lexer.yy.cpp
+parser.o
